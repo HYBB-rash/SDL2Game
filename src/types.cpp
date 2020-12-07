@@ -10,6 +10,8 @@
 
 #include "helper.h"
 #include "render.h"
+#include "adt.h"
+
 
 extern LinkList animationsList[];
 TTF_Font* font;
@@ -164,4 +166,76 @@ void addScore(Score* a, Score* b){
     a->killed += b->killed;
     a->stand += b->stand;
     a->calcScore();
+}
+
+void LinkList::initLinkList(){
+    head = tail = nullptr;
+}
+
+void LinkList::destroyLinkList() {
+    for (LinkNode *p = head, *nxt; p; p = nxt){
+        nxt = p->nxt;
+        free(p);
+    }
+    free(this);
+}
+
+void LinkList::removeAnimationFromLinkList(LinkList *list, Animation *ani) {
+    for (LinkNode *p = head; p; p = p->nxt)
+        if (p->element == ani){
+            removeLinkNode(this, p);
+            ani->destroyAnimation();
+            break;
+        }
+}
+
+void LinkNode::initLinkNode() {
+    nxt = pre = nullptr;
+    element = nullptr;
+}
+
+void removeLinkNode(LinkList *list, LinkNode *node) {
+    if (node->pre) node->pre->nxt = node->nxt;
+    else list->head = node->nxt;
+    if (node->nxt) node->nxt->pre = node->pre;
+    else list->tail = node->pre;
+    free(node);
+}
+
+LinkNode* createLinkNode(void* element){
+    auto *self = new LinkNode();
+    self->initLinkNode();
+    self->element = element;
+    return self;
+}
+LinkList* createLinkList(){
+    auto *self = new LinkList();
+    self->initLinkList();
+    return self;
+}
+
+void destroyAnimationsByLinkList(LinkList *list) {
+    for (LinkNode *p = list->head, *nxt; p; p = nxt) {
+        nxt = p->nxt;
+        ((Animation *) p->element)->destroyAnimation();
+        removeLinkNode(list, p);
+    }
+}
+
+void pushLinkNode(LinkList *list,LinkNode* node){
+    if (list->head == nullptr) list->head = list->tail = node;
+    else {
+        list->tail->nxt = node;
+        node->pre = list->tail;
+        list->tail = node;
+    }
+}
+
+void pushLinkNodeAtHead(LinkList *list, LinkNode *node) {
+    if (list->head == nullptr) list->head = list->tail = node;
+    else {
+        node->nxt = list->head;
+        list->head->pre = node;
+        list->head = node;
+    }
 }
