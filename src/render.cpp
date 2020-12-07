@@ -109,3 +109,219 @@ void updateAnimationLinkList(LinkList *list) {
         }
     }
 }
+
+void updateAnimationOfSnake(Snake *snake) {
+    for (LinkNode *p = snake->sprites->head; p; p = p->nxt)
+        updateAnimationOfSprite((Sprite *)p->element);
+}
+
+void renderAnimationLinkList(LinkList *list) {
+    LinkNode *p = list->head;
+    while (p) {
+        renderAnimation((Animation *)p->element);
+        p = p->nxt;
+    }
+}
+
+void updateAnimationFromBind(Animation *self) {
+    if (self->bind) {
+        auto *sprite = (Sprite*)self->bind;
+        self->x = sprite->x;
+        self->y = sprite->y;
+        self->flip = sprite->ani->flip;
+    }
+}
+
+void bindAnimationToSprite(Animation *ani, Sprite *sprite, bool isStrong) {
+    ani->bind = sprite;
+    ani->strongBind = isStrong;
+    updateAnimationFromBind(ani);
+}
+
+void clearBindInAnimationsList(Sprite *sprite, int id) {
+    for (LinkNode *p = animationsList[id].head, *nxt; p; p = nxt){
+        nxt = p->nxt;
+        auto *ani = (Animation *)p->element;
+        if (ani->bind == sprite) {
+            ani->bind = nullptr;
+            if (ani->strongBind) {
+                removeLinkNode(&animationsList[id], p);
+                ani->destroyAnimation();
+            }
+        }
+    }
+}
+
+void renderAnimation(Animation* ani){
+    if (!ani) return;
+    updateAnimationFromBind(ani);
+    int width = ani->origin->width;
+    int height = ani->origin->height;
+    SDL_Point poi = {ani->origin->width, ani->origin->height / 2};
+    if (ani->scaled) {
+        width *= SCALLING_FACTOR;
+        height *= SCALLING_FACTOR;
+    }
+    SDL_Rect dst = {ani->x - width / 2, ani->y - height, width, height};
+    if (ani->at == AT_TOP_LEFT) {
+        dst.x = ani->x;
+        dst.y = ani->y;
+    } else if (ani->at == AT_CENTER) {
+        dst.x = ani->x - width / 2;
+        dst.y = ani->y - height / 2;
+        poi.x = ani->origin->width / 2;
+    } else if (ani->at == AT_BOTTOM_LEFT) {
+        dst.x = ani->x;
+        dst.y = ani->y + UNIT - height - 3;
+    }
+    if (ani->effect) {
+        setEffect(ani->origin, ani->effect);
+        ani->effect->currentFrame %= ani->effect->duration;
+    }
+#ifdef DBG
+    assert(ani->duration >= ani->origin->frames);
+#endif
+    int stage = 0;
+    if (ani->origin->frames > 1) {
+        double interval = (double) ani->duration / ani->origin->frames;
+        stage = ani->currentFrame / interval;
+    }
+    SDL_RenderCopyEx(renderer, ani->origin->origin, &(ani->origin->crops[stage]), &dst, ani->angle,
+                     &poi, ani->flip);
+    if (ani->effect) unsetEffect(ani->origin);
+#ifdef DBG_CROSS
+    if (ani->at == AT_BOTTOM_CENTER) {
+    Sprite fake;
+    fake.ani = ani;
+    SDL_Rect tmp;
+
+    tmp = getSpriteBoundBox(&fake);
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 200);
+    SDL_RenderDrawRect(renderer, &tmp);
+
+    tmp = getSpriteFeetBox(&fake);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 200);
+    SDL_RenderDrawRect(renderer, &tmp);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 200);
+    SDL_RenderDrawRect(renderer, &dst);
+  }
+#endif
+}
+
+void initRenderer() {
+    renderFrames = 0;
+    for (auto & i : animationsList)
+        i.initLinkList();
+}
+
+void initCountDownBar() {
+    createAndPushAnimation(
+            &animationsList[RENDER_LIST_UI_ID], &textures[RES_SLIDER], nullptr,
+            LOOP_INFI, 1, SCREEN_WIDTH / 2 - 128, 10, SDL_FLIP_NONE, 0, AT_TOP_LEFT);
+    countDownBar = createAndPushAnimation(
+            &animationsList[RENDER_LIST_UI_ID], &textures[RES_BAR_BLUE], nullptr,
+            LOOP_INFI, 1, SCREEN_WIDTH / 2 - 128, 10, SDL_FLIP_NONE, 0, AT_TOP_LEFT);
+}
+
+void initInfo() {
+    int stage;
+    char buf[1 << 8];
+    sprintf(buf, "Stage:%3d", stage);
+    if (stageText) stageText->setText(buf);
+    else stageText = createText(buf, WHITE);
+    for (int i = 0; i < playersCount; i ++)
+        if (!scoresText[i]) scoresText[i] = createText("placeholder", WHITE);
+    if (!taskText) taskText = createText("placeholder", WHITE);
+}
+
+void clearRenderer() {
+    for (auto & i : animationsList) {
+        destroyAnimationsByLinkList(&i);
+    }
+    SDL_RenderClear(renderer);
+}
+
+int compareAnimationByY(const void* x, const void* y) {
+    Animation* a = *(Animation**)x;//todo
+    Animation* b = *(Animation**)y;
+    return b->y - a->y;
+}
+
+void renderAnimationLinkListWithSort(LinkList* list) {
+    static Animation* buffer[RENDER_BUFFER_SIZE];
+    int count = 0;
+    LinkNode *p = list->head;
+    while (p) {
+        buffer[count++] = (Animation *)p->element;
+        p = p->nxt;
+    }
+    qsort(buffer, count, sizeof(Animation*), compareAnimationByY);
+    while (count) renderAnimation(buffer[--count]);
+}
+
+void renderSnakeHp(Snake* snake) {
+    for (LinkNode* p = snake->sprites->head; p; p = p->nxt) {
+        auto* sprite = (Sprite*)p->element;
+        if (sprite->hp == sprite->totoalHp) continue;
+        double percent = (double)sprite->hp / sprite->totoalHp;
+        for (int i = 0; percent > 1e-8; i++, percent -= 1) {
+            int r = 0, g = 0, b = 0;
+            if (i == 0) {
+                if (percent < 1) {
+                    r = MIN((1 - percent) * 2 * 255, 255),
+                            g = MAX(0, 255 - (MAX(0.5 - percent, 0)) * 2 * 255);
+                } else {
+                    g = 255;
+                }
+            } else {
+                r = g = 0, b = 255;
+            }
+            SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+            int width = RENDER_HP_BAR_WIDTH;
+            int spriteHeight = sprite->ani->origin->height * SCALLING_FACTOR;
+            SDL_Rect bar = {sprite->x - UNIT / 2 + (UNIT - width) / 2,
+                            sprite->y - spriteHeight - RENDER_HP_BAR_HEIGHT * (i + 1),
+                            width * MIN(1, lround(percent)), RENDER_HP_BAR_HEIGHT};
+            SDL_RenderDrawRect(renderer, &bar);
+        }
+    }
+}
+
+void renderHp(){
+    for (int i = 0; i < spritesCount; ++i) renderSnakeHp(spriteSnake[i]);
+}
+
+void renderCountDown(){
+
+}
+
+void renderInfo(){
+
+}
+
+void renderId(){
+    int powerful = getPowerfulPlayer();
+    for (int i = 0; i < playersCount; ++i) {
+        Snake *snake = spriteSnake[i];
+        if (snake->sprites->head) {
+            auto *snakeHead = (Sprite *)snake->sprites->head->element;
+            if (i == powerful); //todo
+        }
+    }
+}
+
+void render() {
+    SDL_SetRenderDrawColor(renderer, 25, 17, 23, 255);
+    SDL_RenderClear(renderer);
+    for (int i = 0; i < ANIMATION_LINK_LIST_NUM; i ++) {
+        updateAnimationLinkList(&animationsList[i]);
+        if (i == RENDER_LIST_SPRITE_ID)
+            renderAnimationLinkListWithSort(&animationsList[i]);
+        else
+            renderAnimationLinkList(&animationsList[i]);
+    }
+}
+
+
+
