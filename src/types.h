@@ -107,6 +107,8 @@ public:
     int x, y, bid;
     bool enable;
     Animation* ani;
+
+    void initBlock(BlockType bp, int x, int y, int bid, bool enable);
 } ;
 typedef enum {
     ITEM_NONE,
