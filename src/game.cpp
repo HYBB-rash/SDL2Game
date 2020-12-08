@@ -3,9 +3,9 @@
 #include <SDL.h>
 #include <cmath>
 #include <cstdbool>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <unistd.h>
 
 #include "ai.h"
@@ -503,8 +503,8 @@ void initGame(int localPlayers, int remotePlayers, bool localFirst) {
 
 void destroyGame(int status) {
     while (spritesCount) {
-        destroySnake(spriteSnake[--spritesCount]);
-        spriteSnake[spritesCount] = NULL;
+        spriteSnake[--spritesCount]->destroySnake();
+        spriteSnake[spritesCount] = nullptr;
     }
     for (int i = 0; i < ANIMATION_LINK_LIST_NUM; i++)
         destroyAnimationsByLinkList(&animationsList[i]);
@@ -532,22 +532,22 @@ void destroyGame(int status) {
     clearRenderer();
 }
 
-void destroySnake(Snake* snake) {
+void Snake::destroySnake() {
     if (bullets)
         for (LinkNode* p = bullets->head; p; p = p->nxt) {
             auto* bullet = static_cast<Bullet *>(p->element);
-            if (bullet->owner == snake) bullet->owner = NULL;
+            if (bullet->owner == this) bullet->owner = nullptr;
         }
-    for (LinkNode* p = snake->sprites->head; p; p = p->nxt) {
+    for (LinkNode* p = sprites->head; p; p = p->nxt) {
         auto* sprite = static_cast<Sprite *>(p->element);
         free(sprite);
-        p->element = NULL;
+        p->element = nullptr;
     }
-    snake->sprites->destroyLinkList();
-    snake->sprites = NULL;
-    destroyScore(snake->score);
-    snake->score = NULL;
-    free(snake);
+    sprites->destroyLinkList();
+    sprites = nullptr;
+    destroyScore(score);
+    score = nullptr;
+    delete(this);
 }
 
 /*
@@ -1119,7 +1119,7 @@ int gameLoop() {
         updateBuffDuration();
         for (int i = playersCount; i < spritesCount; i++) {
             if (!spriteSnake[i]->num) {
-                destroySnake(spriteSnake[i]);
+                spriteSnake[i]->destroySnake();
                 spriteSnake[i] = nullptr;
                 for (int j = i; j + 1 < spritesCount; j++)
                     spriteSnake[j] = spriteSnake[j + 1];

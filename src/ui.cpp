@@ -87,7 +87,7 @@ int chooseOptions(int optionsNum, Text** options) {
         renderFrames++;
     }
     playAudio(AUDIO_BUTTON1);
-    destroySnake(player);
+    player->destroySnake();
     destroyAnimationsByLinkList(&animationsList[RENDER_LIST_SPRITE_ID]);
     return cursorPos;
 }

@@ -23,16 +23,9 @@ public:
     int buffs[BUFF_END];  // 特殊buff
     Score* score;         // 记录分数
     PlayerType playerType;// 玩家类型
+
+    void destroySnake();
 } ;
 
-void destroySnake(Snake*);
-
-/**
- * 创建一个贪吃蛇队伍
- * @param step
- * @param team
- * @param playerType 玩家类型
- * @return 返回一只贪吃蛇队伍
- */
 Snake* createSnake(int step, int team, PlayerType playerType);
 #endif
