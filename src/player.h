@@ -1,9 +1,5 @@
-//
-// Created by hyong on 2020/12/7.
-//
-
-#ifndef SDL2GAME_PLAYER_H
-#define SDL2GAME_PLAYER_H
+#ifndef SNAKE__PLAYER_H_
+#define SNAKE__PLAYER_H_
 #include "types.h"
 #include "adt.h"
 
@@ -27,13 +23,9 @@ public:
     int buffs[BUFF_END];  // 特殊buff
     Score* score;         // 记录分数
     PlayerType playerType;// 玩家类型
+} ;
 
-    void initSnake(int step, int team, PlayerType playerType);
-    void destroySnake();
-
-    };
-
-
+void destroySnake(Snake*);
 
 /**
  * 创建一个贪吃蛇队伍
@@ -43,4 +35,4 @@ public:
  * @return 返回一只贪吃蛇队伍
  */
 Snake* createSnake(int step, int team, PlayerType playerType);
-#endif //SDL2GAME_PLAYER_H
+#endif

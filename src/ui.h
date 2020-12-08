@@ -1,9 +1,5 @@
-//
-// Created by hyong on 2020/12/7.
-//
-
-#ifndef SDL2GAME_UI_H
-#define SDL2GAME_UI_H
+#ifndef SNAKE_UI_H_
+#define SNAKE_UI_H_
 #include <SDL.h>
 #include "types.h"
 #define UI_MAIN_GAP 40
@@ -13,4 +9,4 @@ void baseUi(int,int);
 void mainUi();
 void rankListUi(int,Score**);
 void localRankListUi();
-#endif //SDL2GAME_UI_H
+#endif

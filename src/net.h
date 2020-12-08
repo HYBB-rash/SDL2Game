@@ -1,9 +1,5 @@
-//
-// Created by hyong on 2020/12/7.
-//
-
-#ifndef SDL2GAME_NET_H
-#define SDL2GAME_NET_H
+#ifndef SNAKE__NET_H_
+#define SNAKE__NET_H_
 
 #include <SDL_net.h>
 
@@ -26,7 +22,7 @@ typedef struct {
 } LanPacketHeader;
 */
 
-class LanPacket {
+class LanPacket{
 public:
     unsigned version: 2;
     unsigned type: 6;
@@ -61,12 +57,12 @@ public:
     unsigned padding: 21;
 } ;
 
-TCPsocket lanServerSocket;
-TCPsocket lanClientSocket;
+extern TCPsocket lanServerSocket;
+extern TCPsocket lanClientSocket;
 
 void hostGame();
 void joinGame(const char* hostname, Uint16 port);
 void sendPlayerMovePacket(unsigned playerId, unsigned direction);
 void sendGameOverPacket(unsigned playerId);
 unsigned recvLanPacket(LanPacket* dest);
-#endif //SDL2GAME_NET_H
+#endif

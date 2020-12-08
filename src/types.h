@@ -1,14 +1,8 @@
-//
-// Created by hyong on 2020/12/7.
-//
-
-#ifndef SDL2GAME_TYPES_H
-#define SDL2GAME_TYPES_H
-
+#ifndef SNAKE_TYPES_
+#define SNAKE_TYPES_
 #include <SDL.h>
 #include <SDL_mixer.h>
-#include <cstdbool>
-#include <string>
+#include <stdbool.h>
 
 #define TEXT_LEN 1024
 #define POSITION_BUFFER_SIZE 256
@@ -30,35 +24,21 @@ public:
     int height, width, frames;
     // SDL_Rect* crops;
     SDL_Rect* crops;
-
-    void initTexture(SDL_Texture* origin, int width, int height, int frames);
-    void destroyTexture();
-};
-
+} ;
 class Text{
 public:
-    std::string text;
+    char text[TEXT_LEN];
     int height, width;
     SDL_Texture* origin;
     SDL_Color color;
-
-    void setText(std::string str);
-    bool initText(std::string str, SDL_Color color);
-    void destroyText();
-};
-Text* createText(std::string str, SDL_Color color);
-
+} ;
+void setText(Text* self, const char* str);
 class Effect{
 public:
     int duration, currentFrame, length;
     SDL_Color* keys;
     SDL_BlendMode mode;
-
-    void initEffect(int duration, int length, SDL_BlendMode mode);
-    void destroyEffect();
 } ;
-void copyEffect(const Effect* src, Effect* dest);
-
 class Animation{
 public:
     LoopType lp;
@@ -73,13 +53,27 @@ public:
     bool scaled;
     bool strongBind;
     int lifeSpan;
-
-    void initAnimation(Texture* origin, const Effect* effect, LoopType lp, int duration, int x, int y,
-                       SDL_RendererFlip flip, double angle, At at);
-    void destroyAnimation();
 } ;
-Animation* createAnimation(Texture* origin, const Effect* effect, LoopType lp, int duration, int x, int y, SDL_RendererFlip flip,
+
+void initTexture(Texture* self, SDL_Texture* origin, int width, int height,
+                 int frames);
+void destroyTexture(Texture* self);
+
+bool initText(Text* self, const char* str, SDL_Color color);
+Text* createText(const char* str, SDL_Color color);
+void destroyText(Text* self);
+
+void initEffect(Effect* self, int duration, int length, SDL_BlendMode mode);
+void destroyEffect(Effect* self);
+void copyEffect(const Effect* src, Effect* dest);
+
+void initAnimation(Animation* self, Texture* origin, const Effect* effect,
+                   LoopType lp, int duration, int x, int y,
+                   SDL_RendererFlip flip, double angle, At at);
+Animation* createAnimation(Texture* origin, const Effect* effect, LoopType lp,
+                           int duration, int x, int y, SDL_RendererFlip flip,
                            double angle, At at);
+void destroyAnimation(Animation* self);
 void copyAnimation(Animation* src, Animation* dest);
 
 // Game Logic Types
@@ -91,15 +85,11 @@ class Score{
 public:
     int damage, stand, killed, got;
     double rank;
-
-    void calcScore();
-    void destroyScore();
 } ;
-
 Score* createScore();
+void calcScore(Score*);
 void addScore(Score*, Score*);
-
-
+void destroyScore(Score*);
 typedef enum { BLOCK_TRAP, BLOCK_WALL, BLOCK_FLOOR, BLOCK_EXIT } BlockType;
 class Block{
 public:
@@ -107,8 +97,6 @@ public:
     int x, y, bid;
     bool enable;
     Animation* ani;
-
-    void initBlock(BlockType bp, int x, int y, int bid, bool enable);
 } ;
 typedef enum {
     ITEM_NONE,
@@ -117,11 +105,10 @@ typedef enum {
     ITEM_HP_EXTRA_MEDCINE,
     ITEM_WEAPON
 } ItemType;
-
 class Item{
 public:
     ItemType type;
     int id, belong;
     Animation* ani;
 } ;
-#endif //SDL2GAME_TYPES_H
+#endif

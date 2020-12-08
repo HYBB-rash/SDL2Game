@@ -1,9 +1,6 @@
-//
-// Created by hyong on 2020/12/7.
-//
+#ifndef SNAKE_RES_H_
+#define SNAKE_RES_H_
 
-#ifndef SDL2GAME_RES_H
-#define SDL2GAME_RES_H
 #include <SDL.h>
 #include "types.h"
 
@@ -183,5 +180,5 @@ void initCommonEffects();
 void initCommonAnimations();
 void initCommonSprites();
 
-SDL_Renderer* renderer;
-#endif //SDL2GAME_RES_H
+extern SDL_Renderer* renderer;
+#endif

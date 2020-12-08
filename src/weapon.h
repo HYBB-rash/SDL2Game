@@ -1,22 +1,59 @@
-//
-// Created by hyong on 2020/12/7.
-//
+#ifndef SNAKE_WEAPON_H_
+#define SNAKE_WEAPON_H_
 
-#ifndef SDL2GAME_WEAPON_H
-#define SDL2GAME_WEAPON_H
 #include "types.h"
 
-#define WEAPONS_SIZE 128    //// 武器：剑
+#define WEAPONS_SIZE 128
+
+/**
+ * 武器：剑
+ */
 #define WEAPON_SWORD 0
-#define WEAPON_MONSTER_CLAW 1   //武器：魔兽之牙
-#define WEAPON_FIREBALL 2   // 武器（魔法）：火球
-#define WEAPON_THUNDER 3    //武器（魔法）：雷电
-#define WEAPON_ARROW 4  //武器（魔法）：弓箭
-#define WEAPON_MONSTER_CLAW2 5  //武器：魔兽之牙2
-#define WEAPON_THROW_AXE 6  //武器：飞斧
-#define WEAPON_MANY_AXES 7  //武器：一群飞斧
-#define WEAPON_SOLID 8  //武器：怪物的口水（带减速效果）
-#define WEAPON_SOLID_GREEN 9    //武器：怪物的口水
+
+/**
+ * 武器：魔兽之牙
+ */
+#define WEAPON_MONSTER_CLAW 1
+
+/**
+ * 武器（魔法）：火球
+ */
+#define WEAPON_FIREBALL 2
+
+/**
+ * 武器（魔法）：雷电
+ */
+#define WEAPON_THUNDER 3
+
+/**
+ * 武器（魔法）：弓箭
+ */
+#define WEAPON_ARROW 4
+
+/**
+ * 武器：魔兽之牙2
+ */
+#define WEAPON_MONSTER_CLAW2 5
+
+/**
+ * 武器：飞斧
+ */
+#define WEAPON_THROW_AXE 6
+
+/**
+ * 武器：一群飞斧
+ */
+#define WEAPON_MANY_AXES 7
+
+/**
+ * 武器：怪物的口水（带减速效果）
+ */
+#define WEAPON_SOLID 8
+
+/**
+ * 武器：怪物的口水
+ */
+#define WEAPON_SOLID_GREEN 9
 
 #define WEAPON_ICEPICK 10
 #define WEAPON_FIRE_SWORD 11
@@ -35,12 +72,12 @@ typedef enum {
     WEAPON_GUN_POINT,
     WEAPON_GUN_POINT_MULTI,
 } WeaponType;
-class WeaponBuff {
+class WeaponBuff{
 public:
     double chance;
     int duration;
 } ;
-class Weapon {
+class Weapon{
 public:
     WeaponType wp;
     int shootRange, effectRange, damage, gap, bulletSpeed;
@@ -50,4 +87,5 @@ public:
 } ;
 
 void initWeapons();
-#endif //SDL2GAME_WEAPON_H
+
+#endif

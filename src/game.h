@@ -1,10 +1,5 @@
-//
-// Created by hyong on 2020/12/7.
-//
-
-#ifndef SDL2GAME_GAME_H
-#define SDL2GAME_GAME_H
-
+#ifndef SNAKE_GAME_H_
+#define SNAKE_GAME_H_
 #include "player.h"
 #include "sprite.h"
 #include "types.h"
@@ -57,4 +52,4 @@ void shieldSprite(Sprite* sprite, int duration);
 void appendSpriteToSnake(Snake* snake, int sprite_id, int x, int y,
                          Direction direcion);
 void setLevel(int level);
-#endif //SDL2GAME_GAME_H
+#endif

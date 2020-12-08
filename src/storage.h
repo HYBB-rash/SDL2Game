@@ -1,10 +1,6 @@
-//
-// Created by hyong on 2020/12/7.
-//
-
-#ifndef SDL2GAME_STORAGE_H
-#define SDL2GAME_STORAGE_H
-#include <cstdio>
+#ifndef SNAKE_STORAGE_H_
+#define SNAKE_STORAGE_H_
+#include <stdio.h>
 
 #include "types.h"
 
@@ -16,4 +12,4 @@ Score** insertScoreToRanklist(Score*, int*, Score**);
 void destroyRanklist(int n, Score** scores);
 void writeRanklist(const char*, int, Score**);
 Score** readRanklist(const char* path, int* n);
-#endif //SDL2GAME_STORAGE_H
+#endif

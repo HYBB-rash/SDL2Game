@@ -1,10 +1,6 @@
-//
-// Created by hyong on 2020/12/7.
-//
-
-#ifndef SDL2GAME_PRNG_H
-#define SDL2GAME_PRNG_H
+#ifndef SNAKE_PRNG_H__
+#define SNAKE_PRNG_H__
 unsigned prngRand();
 void prngSrand(unsigned seed);
 #define PRNG_MAX 32767
-#endif //SDL2GAME_PRNG_H
+#endif

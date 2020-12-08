@@ -1,9 +1,6 @@
-//
-// Created by hyong on 2020/12/7.
-//
+#ifndef SNAKE_SPRITE_H_
+#define SNAKE_SPRITE_H_
 
-#ifndef SDL2GAME_SPRITE_H
-#define SDL2GAME_SPRITE_H
 #include "types.h"
 #include "weapon.h"
 #include "adt.h"
@@ -31,11 +28,10 @@ public:
     int bufferSize;           // TODO
     int lastAttack;           // todo
     double dropRate;          // todo
-
-    void initSprite(Sprite* model, int x, int y);
-
 } ;
 
 void changeSpriteDirection(LinkNode*, Direction);
+void initSprite(Sprite* model, Sprite* self, int x, int y);
 Sprite* createSprite(Sprite* model, int x, int y);
-#endif //SDL2GAME_SPRITE_H
+
+#endif
