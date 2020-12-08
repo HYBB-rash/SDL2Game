@@ -124,7 +124,7 @@ void appendSpriteToSnake(
     snake->score->got++;
     // at head
     auto* node = static_cast<LinkNode *>(malloc(sizeof(LinkNode)));
-    initLinkNode(node);
+    node->initLinkNode();
 
     // create a sprite
     Sprite* snakeHead = NULL;
@@ -154,7 +154,7 @@ void appendSpriteToSnake(
     }
     // insert the sprite
     node->element = sprite;
-    pushLinkNodeAtHead(snake->sprites, node);
+    snake->sprites->pushLinkNodeAtHead(node);
 
     // push ani
     pushAnimationToRender(RENDER_LIST_SPRITE_ID, sprite->ani);
@@ -514,8 +514,8 @@ void destroyGame(int status) {
         p->element = NULL;
     }
 
-    destroyLinkList(bullets);
-    bullets = NULL;
+    bullets->destroyLinkList();
+    bullets = nullptr;
 
     blackout();
     char* msg;
@@ -543,7 +543,7 @@ void destroySnake(Snake* snake) {
         free(sprite);
         p->element = NULL;
     }
-    destroyLinkList(snake->sprites);
+    snake->sprites->destroyLinkList();
     snake->sprites = NULL;
     destroyScore(snake->score);
     snake->score = NULL;
@@ -760,7 +760,7 @@ bool makeSnakeCross(Snake* snake) {
                 sprite->x = prevSprite->x;
                 sprite->y = prevSprite->y;
             }
-            removeLinkNode(snake->sprites, p);
+            snake->sprites->removeLinkNode(p);
             free(sprite);
         }
     }
@@ -842,7 +842,7 @@ void makeCross() {
             auto* bullet = static_cast<Bullet *>(p->element);
             removeAnimationFromLinkList(&animationsList[RENDER_LIST_EFFECT_ID],
                                         bullet->ani);
-            removeLinkNode(bullets, p);
+            bullets->removeLinkNode(p);
         }
     }
 }
@@ -935,7 +935,7 @@ void makeSpriteAttack(Sprite* sprite, Snake* snake) {
                 } else {
                     Bullet* bullet = createBullet(snake, weapon, sprite->x, sprite->y,
                                                   rad, snake->team, weapon->flyAni);
-                    pushLinkNode(bullets, createLinkNode(bullet));
+                    bullets->pushLinkNode(createLinkNode(bullet));
                     pushAnimationToRender(RENDER_LIST_EFFECT_ID, bullet->ani);
                     attacked = true;
                     if (weapon->wp != WEAPON_GUN_POINT_MULTI) goto ATTACK_END;

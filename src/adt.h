@@ -6,30 +6,26 @@ class LinkNode{
 public:
     void* element;
     LinkNode *pre, *nxt;
+
+    void initLinkNode();
 };
 class LinkList{
 public:
     LinkNode *head, *tail;
-} ;
 
-void initLinkNode(LinkNode* self);
+    void initLinkList();
+    void destroyLinkList();
+    void pushLinkNode(LinkNode *node);
+    void pushLinkNodeAtHead(LinkNode *node);
+    void removeLinkNode(LinkNode *node);
+} ;
 
 LinkNode* createLinkNode(void* element);
 
-void initLinkList(LinkList* self);
-
 LinkList* createLinkList();
-
-void destroyLinkList(LinkList* self);
 
 void destroyAnimationsByLinkList(LinkList* list);
 
 void removeAnimationFromLinkList(LinkList* list, Animation* ani);
-
-void pushLinkNode(LinkList* self, LinkNode* node);
-
-void pushLinkNodeAtHead(LinkList* self, LinkNode* node);
-
-void removeLinkNode(LinkList* self, LinkNode* node);
 
 #endif

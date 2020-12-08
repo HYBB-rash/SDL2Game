@@ -88,7 +88,7 @@ int testOneMove(Snake* snake, Direction direction) {
 }
 
 int compareChoiceByValue(const void* x, const void* y) {
-    const Choice *a = static_cast<const Choice *>(x), *b = static_cast<const Choice *>(y);
+    const auto *a = static_cast<const Choice *>(x), *b = static_cast<const Choice *>(y);
     return b->value - a->value;
 }
 

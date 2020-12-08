@@ -77,7 +77,7 @@ void initInfo() {
 void initRenderer() {
     renderFrames = 0;
     for (int i = 0; i < ANIMATION_LINK_LIST_NUM; i++) {
-        initLinkList(&animationsList[i]);
+        animationsList[i].initLinkList();
     }
 }
 void clearInfo() {
@@ -206,7 +206,7 @@ void clearBindInAnimationsList(Sprite* sprite, int id) {
         if (ani->bind == sprite) {
             ani->bind = NULL;
             if (ani->strongBind) {
-                removeLinkNode(&animationsList[id], p);
+                animationsList[id].removeLinkNode(p);
                 destroyAnimation(ani);
             }
         }
@@ -283,7 +283,7 @@ void renderAnimation(Animation* ani) {
 }
 void pushAnimationToRender(int id, Animation* ani) {
     LinkNode* p = createLinkNode(ani);
-    pushLinkNode(&animationsList[id], p);
+    animationsList[id].pushLinkNode(p);
 }
 /**
  * 将动画效果附着到链表中
@@ -306,7 +306,7 @@ Animation* createAndPushAnimation(LinkList* list, Texture* texture,
     Animation* ani =
             createAnimation(texture, effect, lp, duration, x, y, flip, angle, at);
     LinkNode* node = createLinkNode(ani);
-    pushLinkNode(list, node);
+    list->pushLinkNode(node);
     return ani;
 }
 void updateAnimationLinkList(LinkList* list) {
@@ -323,12 +323,12 @@ void updateAnimationLinkList(LinkList* list) {
         if (ani->lp == LOOP_ONCE) {
             if (ani->currentFrame == ani->duration) {
                 destroyAnimation(static_cast<Animation *>(p->element));
-                removeLinkNode(list, p);
+                list->removeLinkNode(p);
             }
         } else {
             if (ani->lp == LOOP_LIFESPAN && !ani->lifeSpan) {
                 destroyAnimation(static_cast<Animation *>(p->element));
-                removeLinkNode(list, p);
+                list->removeLinkNode(p);
             } else
                 ani->currentFrame %= ani->duration;
         }

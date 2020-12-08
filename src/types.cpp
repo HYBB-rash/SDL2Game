@@ -139,18 +139,13 @@ void copyAnimation(Animation* src, Animation* dest) {
  * 初始化链表的节点
  * @param self 一个链表节点
  */
-void initLinkNode(LinkNode* self) {
-    self->nxt = self->pre = static_cast<_LinkNode *>(self->element = NULL);
+void LinkNode::initLinkNode() {
+    nxt = pre = static_cast<LinkNode *>(element = nullptr);
 }
 
-/**
- * 创建一个链表的节点
- * @param element 链表内的内容
- * @return 返回一个节点
- */
 LinkNode* createLinkNode(void* element) {
-    LinkNode* self = static_cast<LinkNode *>(malloc(sizeof(LinkNode)));
-    initLinkNode(self);
+    auto* self = new LinkNode();
+    self->initLinkNode();
     self->element = element;
     return self;
 }
@@ -159,45 +154,34 @@ LinkNode* createLinkNode(void* element) {
  * 初始化链表，把链表的头节点和尾节点初始化为null
  * @param self 一个链表
  */
-void initLinkList(LinkList* self) { self->head = self->tail = NULL; }
+void LinkList::initLinkList() { head = tail = nullptr; }
 
 /**
  * 创建一个链表结构
  * @return 链表指针
  */
 LinkList* createLinkList() {
-    LinkList* self = static_cast<LinkList *>(malloc(sizeof(LinkList)));
-    initLinkList(self);
+    auto* self = new LinkList();
+    self->initLinkList();
     return self;
 }
 
-/**
- * 将节点插入链表中（头插法）
- * @param list 待插入的链表（双向链表的插法）
- * @param node 待插入的节点
- */
-void pushLinkNodeAtHead(LinkList* list, LinkNode* node) {
-    if (list->head == NULL) {
-        list->head = list->tail = node;
+void LinkList::pushLinkNodeAtHead(LinkNode *node) {
+    if (head == nullptr) {
+        head = tail = node;
     } else {
-        node->nxt = list->head;
-        list->head->pre = node;
-        list->head = node;
+        node->nxt = head;
+        head->pre = node;
+        head = node;
     }
 }
-/**
- * 将节点插入链表中（尾插法）
- * @param list 待插入的链表（双向链表的插法）
- * @param node 待插入的节点
- */
-void pushLinkNode(LinkList* list, LinkNode* node) {
-    if (list->head == NULL) {
-        list->head = list->tail = node;
+void LinkList::pushLinkNode(LinkNode *node) {
+    if (head == nullptr) {
+        head = tail = node;
     } else {
-        list->tail->nxt = node;
-        node->pre = list->tail;
-
-        list->tail = node;
+        tail->nxt = node;
+        node->pre = tail;
+        tail = node;
     }
 }
 
@@ -206,30 +190,20 @@ void pushLinkNode(LinkList* list, LinkNode* node) {
  * @param list
  * @param node
  */
-void removeLinkNode(LinkList* list, LinkNode* node) {
-    if (node->pre) {
-        node->pre->nxt = node->nxt;
-    } else {
-        list->head = node->nxt;
-    }
-    if (node->nxt) {
-        node->nxt->pre = node->pre;
-    } else {
-        list->tail = node->pre;
-    }
-    free(node);
+void LinkList::removeLinkNode(LinkNode *node) {
+    if (node->pre) node->pre->nxt = node->nxt;
+    else head = node->nxt;
+    if (node->nxt) node->nxt->pre = node->pre;
+    else tail = node->pre;
+    delete(node);
 }
 
-/**
- * 历遍整个链表，把所有的链表节点删除
- * @param self 一个链表
- */
-void destroyLinkList(LinkList* self) {
-    for (LinkNode *p = self->head, *nxt; p; p = nxt) {
+void LinkList::destroyLinkList() {
+    for (LinkNode *p = head, *nxt; p; p = nxt) {
         nxt = p->nxt;
-        free(p);
+        delete(p);
     }
-    free(self);
+    delete(this);
 }
 
 /**
@@ -240,32 +214,32 @@ void destroyAnimationsByLinkList(LinkList* list) {
     for (LinkNode *p = list->head, *nxt; p; p = nxt) {
         nxt = p->nxt;
         destroyAnimation(static_cast<Animation *>(p->element));
-        removeLinkNode(list, p);
+        list->removeLinkNode(p);
     }
 }
 void removeAnimationFromLinkList(LinkList* self, Animation* ani) {
     for (LinkNode* p = self->head; p; p = p->nxt)
         if (p->element == ani) {
-            removeLinkNode(self, p);
+            self->removeLinkNode(p);
             destroyAnimation(ani);
             break;
         }
 }
 void changeSpriteDirection(LinkNode* self, Direction newDirection) {
-    Sprite* sprite = static_cast<Sprite *>(self->element);
+    auto* sprite = static_cast<Sprite *>(self->element);
     if (sprite->direction == (1 ^ newDirection)) return;
     sprite->direction = newDirection;
     if (newDirection == LEFT || newDirection == RIGHT)
         sprite->face = newDirection;
     if (self->nxt) {
-        Sprite* nextSprite = static_cast<Sprite *>(self->nxt->element);
+        auto* nextSprite = static_cast<Sprite *>(self->nxt->element);
         nextSprite->buffer[nextSprite->bufferSize++] =
                 (PositionBuffer){sprite->x, sprite->y, sprite->direction};
     }
 }
 void initScore(Score* score) { memset(score, 0, sizeof(Score)); }
 Score* createScore() {
-    Score* score = static_cast<Score *>(malloc(sizeof(Score)));
+    auto* score = static_cast<Score *>(malloc(sizeof(Score)));
     initScore(score);
     return score;
 }

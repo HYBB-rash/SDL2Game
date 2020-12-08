@@ -328,7 +328,7 @@ void pushMapToRender() {
 #ifdef DBG
             assert(node->element);
 #endif
-            pushLinkNode(&animationsList[RENDER_LIST_MAP_ID], node);
+            animationsList[RENDER_LIST_MAP_ID].pushLinkNode(node);
         }
     }
 }
