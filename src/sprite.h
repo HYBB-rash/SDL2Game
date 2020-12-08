@@ -21,17 +21,19 @@ class Sprite{
 public:
     int x, y, hp, totoalHp;   // 位置，血量，血量上限
     Weapon* weapon;           // 武器
-    Animation* ani;           // TODO
-    Direction face;           // TODO
-    Direction direction;      // TODO
-    PositionBuffer buffer[POSITION_BUFFER_SIZE];// TODO
-    int bufferSize;           // TODO
-    int lastAttack;           // todo
-    double dropRate;          // todo
+    Animation* ani;
+    Direction face;
+    Direction direction;
+    PositionBuffer buffer[POSITION_BUFFER_SIZE];
+    int bufferSize;
+    int lastAttack;
+    double dropRate;
+
+    void initSprite(Sprite *model, int x, int y);
 } ;
 
 void changeSpriteDirection(LinkNode*, Direction);
-void initSprite(Sprite* model, Sprite* self, int x, int y);
+
 Sprite* createSprite(Sprite* model, int x, int y);
 
 #endif
