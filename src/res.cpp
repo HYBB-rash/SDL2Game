@@ -85,7 +85,7 @@ Effect effects[EFFECTS_SIZE];
 Sprite commonSprites[COMMON_SPRITE_SIZE];
 
 Mix_Music *mainTitle;
-Mix_Music *bgms[AUDIO_BGM_SIZE];
+Mix_Music *backgroundMusics[AUDIO_BGM_SIZE];
 int soundsCount;
 Mix_Chunk *sounds[AUDIO_SOUND_SIZE];
 
@@ -214,9 +214,9 @@ bool loadTileset(const char* path, SDL_Texture* origin) {
 bool loadAudio() {
     bool success = true;
     for (int i = 0; i < bgmNums; i++) {
-        bgms[i] = Mix_LoadMUS(bgmsPath[i]);
-        success &= bgms[i] != NULL;
-        if (!bgms[i]) printf("Failed to load %s: SDL_mixer Error: %s\n", bgmsPath[i], Mix_GetError());
+        backgroundMusics[i] = Mix_LoadMUS(bgmsPath[i]);
+        success &= backgroundMusics[i] != NULL;
+        if (!backgroundMusics[i]) printf("Failed to load %s: SDL_mixer Error: %s\n", bgmsPath[i], Mix_GetError());
 #ifdef DBG
         else printf("BGM %s loaded\n", bgmsPath[i]);
 #endif

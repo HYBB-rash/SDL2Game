@@ -50,9 +50,7 @@ int getPowerfulPlayer() {
         } else if (num == maxNum)
             mxCount++;
     }
-    return id != -1 && mxCount == 1
-           ? (spriteSnake[id]->num >= AI_LOCK_LIMIT ? id : -1)
-           : -1;
+    return id != -1 && mxCount == 1 ? (spriteSnake[id]->num >= AI_LOCK_LIMIT ? id : -1) : -1;
 }
 
 int balanceVerdict(Sprite* sprite, int id) {
@@ -97,7 +95,7 @@ void AiInput(Snake* snake) {
     Direction currentDirection = snakeHead->direction;
     int originValue = testOneMove(snake, currentDirection);
     bool change = originValue < 0;
-    if (randDouble() < AI_PATH_RANDOM) change = 1;
+    if (randDouble() < AI_PATH_RANDOM) change = true;
     if (change) {
         static Choice choices[4];
         int count = 0;

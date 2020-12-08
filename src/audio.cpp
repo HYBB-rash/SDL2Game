@@ -6,16 +6,16 @@
 // 音效和BGM模块
 
 extern const int bgmNums;
-extern Mix_Music *bgms[AUDIO_BGM_SIZE];
+extern Mix_Music *backgroundMusics[AUDIO_BGM_SIZE];
 extern Mix_Chunk *sounds[AUDIO_SOUND_SIZE];
 
 int nowBgmId = -1;
 void playBgm(int id) {
     if (nowBgmId == id) return;
     if (nowBgmId == -1)
-        Mix_PlayMusic(bgms[id], -1);
+        Mix_PlayMusic(backgroundMusics[id], -1);
     else
-        Mix_FadeInMusic(bgms[id], -1, BGM_FADE_DURATION);
+        Mix_FadeInMusic(backgroundMusics[id], -1, BGM_FADE_DURATION);
     nowBgmId = id;
 }
 void stopBgm() {

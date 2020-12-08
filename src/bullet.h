@@ -15,9 +15,11 @@ public:
     Snake* owner;
     double rad; // 角度
     Animation* ani;
-} ;
+
+    void destroyBullet();
+    void moveBullet();
+};
 Bullet* createBullet(Snake* owner,Weapon* parent, int x, int y, double rad, int team, Animation* ani);
-void destroyBullet(Bullet* bullet);
-void moveBullet(Bullet* bullet);
+
 
 #endif

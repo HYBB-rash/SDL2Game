@@ -510,8 +510,8 @@ void destroyGame(int status) {
         destroyAnimationsByLinkList(&animationsList[i]);
 
     for (LinkNode* p = bullets->head; p; p = p->nxt) {
-        destroyBullet(static_cast<Bullet *>(p->element));
-        p->element = NULL;
+        static_cast<Bullet *>(p->element)->destroyBullet();
+        p->element = nullptr;
     }
 
     bullets->destroyLinkList();
@@ -1103,7 +1103,7 @@ int gameLoop() {
             moveSnake(spriteSnake[i]);
             makeSnakeAttack(spriteSnake[i]);
         }
-        for (LinkNode* p = bullets->head; p; p = p->nxt) moveBullet(static_cast<Bullet*>(p->element));
+        for (LinkNode* p = bullets->head; p; p = p->nxt) static_cast<Bullet*>(p->element)->moveBullet();
         if (renderFrames % GAME_MAP_RELOAD_PERIOD == 0)
             initItemMap(herosSetting - herosCount, flasksSetting - flasksCount);
         for (int i = 0; i < spritesCount; i++) {
@@ -1120,10 +1120,10 @@ int gameLoop() {
         for (int i = playersCount; i < spritesCount; i++) {
             if (!spriteSnake[i]->num) {
                 destroySnake(spriteSnake[i]);
-                spriteSnake[i] = NULL;
+                spriteSnake[i] = nullptr;
                 for (int j = i; j + 1 < spritesCount; j++)
                     spriteSnake[j] = spriteSnake[j + 1];
-                spriteSnake[spritesCount--] = NULL;
+                spriteSnake[spritesCount--] = nullptr;
             }
         }
         if (willTerm) {

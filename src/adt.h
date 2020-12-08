@@ -9,6 +9,9 @@ public:
 
     void initLinkNode();
 };
+
+LinkNode* createLinkNode(void* element);
+
 class LinkList{
 public:
     LinkNode *head, *tail;
@@ -19,8 +22,6 @@ public:
     void pushLinkNodeAtHead(LinkNode *node);
     void removeLinkNode(LinkNode *node);
 } ;
-
-LinkNode* createLinkNode(void* element);
 
 LinkList* createLinkList();
 

@@ -12,15 +12,12 @@ Bullet* createBullet(Snake* owner, Weapon* parent, int x, int y, double rad,
     bullet->ani->angle = rad * 180 / PI;
     return bullet;
 }
-/**
- * 计算子弹的下一刻位置并移动到下一时刻的坐标
- * @param bullet 待计算的子弹
- */
-void moveBullet(Bullet* bullet) {
-    int speed = bullet->parent->bulletSpeed;
-    bullet->x += cos(bullet->rad) * speed;
-    bullet->y += sin(bullet->rad) * speed;
-    bullet->ani->x = bullet->x;
-    bullet->ani->y = bullet->y;
+
+void Bullet::moveBullet() {
+    int speed = parent->bulletSpeed;
+    x += cos(rad) * speed;
+    y += sin(rad) * speed;
+    ani->x = x;
+    ani->y = y;
 }
-void destroyBullet(Bullet* bullet) { free(bullet); }
+void Bullet::destroyBullet() { delete(this); }
