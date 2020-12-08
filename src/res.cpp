@@ -180,7 +180,7 @@ bool loadTextset() {
         int n = strlen(str);
         while (n - 1 >= 0 && !isprint(str[n - 1])) str[--n] = 0;
         if (!n) continue;
-        if (!initText(&texts[textsCount++], str, WHITE)) {
+        if (!texts[textsCount++].initText(str, WHITE)) {
             success = false;
         }
 #ifdef DBG
@@ -196,7 +196,7 @@ bool loadTileset(const char* path, SDL_Texture* origin) {
     char resName[256];
     while (fscanf(file, "%s %d %d %d %d %d", resName, &x, &y, &w, &h, &f) == 6) {
         Texture* p = &textures[texturesCount++];
-        initTexture(p, origin, w, h, f);
+        p->initTexture(origin, w, h, f);
         for (int i = 0; i < f; i++) {
             p->crops[i].x = x + i * w;
             p->crops[i].y = y;
@@ -280,9 +280,9 @@ void cleanup() {
     }
     // Destroy window
     SDL_DestroyRenderer(renderer);
-    renderer = NULL;
+    renderer = nullptr;
     SDL_DestroyWindow(window);
-    window = NULL;
+    window = nullptr;
 
     // Quit SDL subsystems
     TTF_Quit();
@@ -293,7 +293,7 @@ void cleanup() {
 }
 void initCommonEffects() {
     // Effect #0: Death
-    initEffect(&effects[0], 30, 4, SDL_BLENDMODE_BLEND);
+    effects[0].initEffect(30, 4, SDL_BLENDMODE_BLEND);
     SDL_Color death = {255, 255, 255, 255};
     effects[0].keys[0] = death;
     death.g = death.b = 0;
@@ -308,7 +308,7 @@ void initCommonEffects() {
 #endif
 
     // Effect #1: Blink ( white )
-    initEffect(&effects[1], 30, 3, SDL_BLENDMODE_ADD);
+    effects[1].initEffect(30, 3, SDL_BLENDMODE_ADD);
     SDL_Color blink = {0, 0, 0, 255};
     effects[1].keys[0] = blink;
     blink.r = blink.g = blink.b = 200;
@@ -318,7 +318,7 @@ void initCommonEffects() {
 #ifdef DBG
     puts("Effect #1: Blink (white) loaded");
 #endif
-    initEffect(&effects[2], 30, 2, SDL_BLENDMODE_BLEND);
+    effects[2].initEffect(30, 2, SDL_BLENDMODE_BLEND);
     SDL_Color vanish = {255, 255, 255, 255};
     effects[2].keys[0] = vanish;
     vanish.a = 0;

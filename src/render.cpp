@@ -66,7 +66,7 @@ void initInfo() {
     char buf[1 << 8];
     sprintf(buf, "Stage:%3d", stage);
     if (stageText)
-        setText(stageText, buf);
+        stageText->setText(buf);
     else
         stageText = createText(buf, WHITE);
     for (int i = 0; i < playersCount; i++)
@@ -76,34 +76,34 @@ void initInfo() {
 
 void initRenderer() {
     renderFrames = 0;
-    for (int i = 0; i < ANIMATION_LINK_LIST_NUM; i++) {
-        animationsList[i].initLinkList();
+    for (auto & i : animationsList) {
+        i.initLinkList();
     }
 }
 void clearInfo() {
-    destroyText(stageText);
-    stageText = NULL;
-    destroyText(taskText);
-    taskText = NULL;
+    stageText->destroyText();
+    stageText = nullptr;
+    taskText->destroyText();
+    taskText = nullptr;
     for (int i = 0; i < playersCount; i++) {
-        destroyText(scoresText[i]);
-        scoresText[i] = NULL;
+        scoresText[i]->destroyText();
+        scoresText[i] = nullptr;
     }
 }
 void clearRenderer() {
-    for (int i = 0; i < ANIMATION_LINK_LIST_NUM; i++) {
-        destroyAnimationsByLinkList(&animationsList[i]);
+    for (auto & i : animationsList) {
+        destroyAnimationsByLinkList(&i);
     }
     SDL_RenderClear(renderer);
 }
 void renderCstrCenteredText(const char* str, int x, int y, double scale) {
     Text* text = static_cast<Text *>(malloc(sizeof(Text)));
-    initText(text, str, WHITE);
+    text->initText(str, WHITE);
     renderCenteredText(text, x, y, scale);
 }
 void renderCstrText(const char* str, int x, int y, double scale) {
     Text* text = static_cast<Text *>(malloc(sizeof(Text)));
-    initText(text, str, WHITE);
+    text->initText(str, WHITE);
     renderText(text, x, y, scale);
 }
 
@@ -207,7 +207,7 @@ void clearBindInAnimationsList(Sprite* sprite, int id) {
             ani->bind = NULL;
             if (ani->strongBind) {
                 animationsList[id].removeLinkNode(p);
-                destroyAnimation(ani);
+                ani->destroyAnimation();
             }
         }
     }
@@ -322,12 +322,12 @@ void updateAnimationLinkList(LinkList* list) {
         }
         if (ani->lp == LOOP_ONCE) {
             if (ani->currentFrame == ani->duration) {
-                destroyAnimation(static_cast<Animation *>(p->element));
+                static_cast<Animation *>(p->element)->destroyAnimation();
                 list->removeLinkNode(p);
             }
         } else {
             if (ani->lp == LOOP_LIFESPAN && !ani->lifeSpan) {
-                destroyAnimation(static_cast<Animation *>(p->element));
+                static_cast<Animation *>(p->element)->destroyAnimation();
                 list->removeLinkNode(p);
             } else
                 ani->currentFrame %= ani->duration;
@@ -426,10 +426,10 @@ void renderInfo() {
     startY += lineGap;
     for (int i = 0; i < playersCount; i++) {
         char buf[1 << 8];
-        calcScore(spriteSnake[i]->score);
+        spriteSnake[i]->score->calcScore();
         sprintf(buf, "Player%d:%5d", i + 1,
-                (int)(spriteSnake[i]->score->rank + 0.5));
-        setText(scoresText[i], buf);
+                lround(spriteSnake[i]->score->rank + 0.5));
+        scoresText[i]->setText(buf);
         renderText(scoresText[i], startX, startY, 1);
         startY += lineGap;
     }
@@ -440,7 +440,7 @@ void renderInfo() {
                 GAME_WIN_NUM > spriteSnake[0]->num
                 ? GAME_WIN_NUM - spriteSnake[0]->num
                 : 0);
-        setText(taskText, buf);
+        taskText->setText(buf);
         renderText(taskText, startX, startY, 1);
         startY += lineGap;
     }

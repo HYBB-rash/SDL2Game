@@ -24,6 +24,9 @@ public:
     int height, width, frames;
     // SDL_Rect* crops;
     SDL_Rect* crops;
+
+    void initTexture(SDL_Texture *origin, int width, int height, int frames);
+    void destroyTexture();
 } ;
 class Text{
 public:
@@ -31,14 +34,27 @@ public:
     int height, width;
     SDL_Texture* origin;
     SDL_Color color;
+
+    void setText(const char *str);
+    bool initText(const char *str, SDL_Color color);
+    void destroyText();
 } ;
-void setText(Text* self, const char* str);
+
+Text* createText(const char* str, SDL_Color color);
+
 class Effect{
 public:
     int duration, currentFrame, length;
     SDL_Color* keys;
     SDL_BlendMode mode;
+
+    void initEffect(int duration, int length, SDL_BlendMode mode);
+    void destroyEffect();
+
 } ;
+
+void copyEffect(const Effect* src, Effect* dest);
+
 class Animation{
 public:
     LoopType lp;
@@ -53,29 +69,18 @@ public:
     bool scaled;
     bool strongBind;
     int lifeSpan;
+
+    void
+    initAnimation(Texture *origin, const Effect *effect, LoopType lp, int duration, int x, int y, SDL_RendererFlip flip,
+                  double angle, At at);
+    void destroyAnimation();
 } ;
 
-void initTexture(Texture* self, SDL_Texture* origin, int width, int height,
-                 int frames);
-void destroyTexture(Texture* self);
 
-bool initText(Text* self, const char* str, SDL_Color color);
-Text* createText(const char* str, SDL_Color color);
-void destroyText(Text* self);
-
-void initEffect(Effect* self, int duration, int length, SDL_BlendMode mode);
-void destroyEffect(Effect* self);
-void copyEffect(const Effect* src, Effect* dest);
-
-void initAnimation(Animation* self, Texture* origin, const Effect* effect,
-                   LoopType lp, int duration, int x, int y,
-                   SDL_RendererFlip flip, double angle, At at);
 Animation* createAnimation(Texture* origin, const Effect* effect, LoopType lp,
                            int duration, int x, int y, SDL_RendererFlip flip,
                            double angle, At at);
-void destroyAnimation(Animation* self);
 void copyAnimation(Animation* src, Animation* dest);
-
 // Game Logic Types
 class Point{
 public:
@@ -85,11 +90,13 @@ class Score{
 public:
     int damage, stand, killed, got;
     double rank;
+
+    void calcScore();
+    void destroyScore();
+    void addScore(Score *);
 } ;
 Score* createScore();
-void calcScore(Score*);
-void addScore(Score*, Score*);
-void destroyScore(Score*);
+
 typedef enum { BLOCK_TRAP, BLOCK_WALL, BLOCK_FLOOR, BLOCK_EXIT } BlockType;
 class Block{
 public:

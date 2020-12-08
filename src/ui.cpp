@@ -143,7 +143,7 @@ char* inputUi() {
         const Text* displayText = NULL;
         if (ret[0]) {
             if (text)
-                setText(text, ret);
+                text->setText(ret);
             else
                 text = createText(ret, WHITE);
             displayText = text;
@@ -174,12 +174,12 @@ char* inputUi() {
     }
 
     SDL_StopTextInput();
-    destroyText(placeholder);
-    destroyText(text);
+    placeholder->destroyText();
+    text->destroyText();
 
     if (quit) {
-        free(ret);
-        return NULL;
+        delete(ret);
+        return nullptr;
     }
 
     return ret;
@@ -356,7 +356,7 @@ void rankListUi(int count, Score** scores) {
 
     chooseOptions(count, opts);
 
-    for (int i = 0; i < count; i++) destroyText(opts[i]);
+    for (int i = 0; i < count; i++) opts[i]->destroyText();
     free(opts);
     blackout();
     clearRenderer();

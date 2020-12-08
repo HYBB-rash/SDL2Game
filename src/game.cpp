@@ -111,7 +111,7 @@ Score** startGame(int localPlayers, int remotePlayers, bool localFirst) {
         setLevel(gameLevel);
         status = gameLoop();
         for (int i = 0; i < localPlayers; i++)
-            addScore(scores[i], spriteSnake[i]->score);
+            scores[i]->addScore(spriteSnake[i]->score);
         destroyGame(status);
         stage++;
     } while (status == 0);
@@ -526,7 +526,7 @@ void destroyGame(int status) {
     extern SDL_Color WHITE;
     Text* text = createText(msg, WHITE);
     renderCenteredText(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2);
-    destroyText(text);
+    text->destroyText();
     SDL_RenderPresent(renderer);
     sleep(RENDER_GAMEOVER_DURATION);
     clearRenderer();
@@ -545,7 +545,7 @@ void Snake::destroySnake() {
     }
     sprites->destroyLinkList();
     sprites = nullptr;
-    destroyScore(score);
+    score->destroyScore();
     score = nullptr;
     delete(this);
 }
@@ -988,7 +988,7 @@ void pauseGame() {
     Text* text = createText(msg, WHITE);
     renderCenteredText(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1);
     SDL_RenderPresent(renderer);
-    destroyText(text);
+    text->destroyText();
     SDL_Event e;
     for (bool quit = 0; !quit;) {
         while (SDL_PollEvent(&e)) {

@@ -18,119 +18,112 @@ extern TTF_Font* font;
 extern SDL_Renderer* renderer;
 SDL_Color BLACK = {0, 0, 0, 255};
 SDL_Color WHITE = {255, 255, 255, 255};
-void initTexture(Texture* self, SDL_Texture* origin, int width, int height,
-                 int frames) {
-    self->origin = origin;
-    self->width = width;
-    self->height = height;
-    self->frames = frames;
-    self->crops = static_cast<SDL_Rect *>(malloc(sizeof(SDL_Rect) * frames));
+void Texture::initTexture(SDL_Texture *origin, int width, int height, int frames) {
+    this->origin = origin;
+    this->width = width;
+    this->height = height;
+    this->frames = frames;
+    this->crops = new SDL_Rect[frames];
     // self->crops = malloc(sizeof(SDL_Rect) * frames);
 }
-void destroyTexture(Texture* self) {
+void Texture::destroyTexture() {
 #ifdef DBG
     assert(self);
 #endif
-    free(self->crops);
-    free(self);
+    delete(crops);
+    delete(this);
 }
-bool initText(Text* self, const char* str, SDL_Color color) {
-    self->color = color;
-    strcpy(self->text, str);
+bool Text::initText(const char *str, SDL_Color color) {
+    color = color;
+    strcpy(text, str);
     // Render text surface
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, str, color);
-    if (textSurface == NULL) {
-        printf("Unable to render text surface! SDL_ttf Error: %s\n",
-               TTF_GetError());
+    if (textSurface == nullptr) {
+        printf("Unable to render text surface! SDL_ttf Error: %s\n",TTF_GetError());
     } else {
         // Create texture from surface pixels
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, textSurface);
-        self->width = textSurface->w;
-        self->height = textSurface->h;
+        width = textSurface->w;
+        height = textSurface->h;
         SDL_FreeSurface(textSurface);
-        if (texture == NULL) {
-            printf("Unable to create texture from rendered text! SDL Error: %s\n",
-                   SDL_GetError());
+        if (texture == nullptr) {
+            printf("Unable to create texture from rendered text! SDL Error: %s\n",SDL_GetError());
         } else {
-            self->origin = texture;
+            origin = texture;
             return true;
         }
     }
     return false;
 }
 Text* createText(const char* str, SDL_Color color) {
-    Text* self = static_cast<Text *>(malloc(sizeof(Text)));
-    initText(self, str, color);
+    Text* self = new Text();
+    self->initText(str, color);
     return self;
 }
-void setText(Text* self, const char* str) {
-    if (!strcmp(str, self->text)) return;
-    SDL_DestroyTexture(self->origin);
-    initText(self, str, self->color);
+void Text::setText(const char *str) {
+    if (!strcmp(str, text)) return;
+    SDL_DestroyTexture(origin);
+    initText(str, color);
 }
-void destroyText(Text* self) {
-    SDL_DestroyTexture(self->origin);
-    free(self);
+void Text::destroyText() {
+    SDL_DestroyTexture(origin);
+    delete(this);
 }
-void initEffect(Effect* self, int duration, int length, SDL_BlendMode mode) {
-    self->keys = static_cast<SDL_Color *>(malloc(sizeof(SDL_Color) * length));
-    self->duration = duration;
-    self->length = length;
-    self->currentFrame = 0;
-    self->mode = mode;
+void Effect::initEffect(int duration, int length, SDL_BlendMode mode) {
+    keys = new SDL_Color[length];
+    this->duration = duration;
+    this->length = length;
+    this->currentFrame = 0;
+    this->mode = mode;
 }
 // deep copy
 void copyEffect(const Effect* src, Effect* dest) {
     memcpy(dest, src, sizeof(Effect));
-    dest->keys = static_cast<SDL_Color *>(malloc(sizeof(SDL_Color) * src->length));
+    dest->keys = new SDL_Color[src->length];
     memcpy(dest->keys, src->keys, sizeof(SDL_Color) * src->length);
 }
-void destroyEffect(Effect* self) {
-    if (self) {
-        free(self->keys);
-        free(self);
-    }
+void Effect::destroyEffect() {
+//    free(keys);
+    delete(this);
 }
 
-void initAnimation(Animation* self, Texture* origin, const Effect* effect,
-                   LoopType lp, int duration, int x, int y,
-                   SDL_RendererFlip flip, double angle, At at) {
+void Animation::initAnimation(Texture *origin, const Effect *effect, LoopType lp, int duration, int x, int y,
+                              SDL_RendererFlip flip,
+                              double angle, At at) {
     // will deep copy effect
-    self->origin = origin;
+    this->origin = origin;
     if (effect) {
-        self->effect = static_cast<Effect *>(malloc(sizeof(Effect)));
-        copyEffect(effect, self->effect);
-    } else {
-        self->effect = NULL;
-    }
-    self->lp = lp;
-    self->duration = duration;
-    self->currentFrame = 0;
-    self->x = x;
-    self->y = y;
-    self->flip = flip;
-    self->angle = angle;
-    self->at = at;
-    self->bind = NULL;
-    self->strongBind = false;
-    self->scaled = true;
-    self->lifeSpan = duration;
+        this->effect = new Effect();
+        copyEffect(effect, this->effect);
+    } else this->effect = nullptr;
+    this->lp = lp;
+    this->duration = duration;
+    this->currentFrame = 0;
+    this->x = x;
+    this->y = y;
+    this->flip = flip;
+    this->angle = angle;
+    this->at = at;
+    this->bind = nullptr;
+    this->strongBind = false;
+    this->scaled = true;
+    this->lifeSpan = duration;
 }
 Animation* createAnimation(Texture* origin, const Effect* effect, LoopType lp,
                            int duration, int x, int y, SDL_RendererFlip flip,
                            double angle, At at) {
-    Animation* self = static_cast<Animation *>(malloc(sizeof(Animation)));
-    initAnimation(self, origin, effect, lp, duration, x, y, flip, angle, at);
+    auto* self = new Animation();
+    self->initAnimation(origin, effect, lp, duration, x, y, flip, angle, at);
     return self;
 }
-void destroyAnimation(Animation* self) {
-    destroyEffect(self->effect);
-    free(self);
+void Animation::destroyAnimation() {
+    effect->destroyEffect();
+    delete(this);
 }
 void copyAnimation(Animation* src, Animation* dest) {
     memcpy(dest, src, sizeof(Animation));
     if (src->effect) {
-        dest->effect = static_cast<Effect *>(malloc(sizeof(Effect)));
+        dest->effect = new Effect();
         copyEffect(src->effect, dest->effect);
     }
 }
@@ -213,7 +206,7 @@ void LinkList::destroyLinkList() {
 void destroyAnimationsByLinkList(LinkList* list) {
     for (LinkNode *p = list->head, *nxt; p; p = nxt) {
         nxt = p->nxt;
-        destroyAnimation(static_cast<Animation *>(p->element));
+        static_cast<Animation *>(p->element)->destroyAnimation();
         list->removeLinkNode(p);
     }
 }
@@ -221,7 +214,7 @@ void removeAnimationFromLinkList(LinkList* self, Animation* ani) {
     for (LinkNode* p = self->head; p; p = p->nxt)
         if (p->element == ani) {
             self->removeLinkNode(p);
-            destroyAnimation(ani);
+            ani->destroyAnimation();
             break;
         }
 }
@@ -239,26 +232,24 @@ void changeSpriteDirection(LinkNode* self, Direction newDirection) {
 }
 void initScore(Score* score) { memset(score, 0, sizeof(Score)); }
 Score* createScore() {
-    auto* score = static_cast<Score *>(malloc(sizeof(Score)));
+    auto* score = new Score();
     initScore(score);
     return score;
 }
-void destroyScore(Score* self) { free(self); }
-void calcScore(Score* self) {
-    if (!self->got) {
-        self->rank = 0;
+void Score::destroyScore() { delete(this); }
+void Score::calcScore() {
+    if (!got) {
+        rank = 0;
         return;
     }
     extern int gameLevel;
-    self->rank = (double)self->damage / self->got +
-                 (double)self->stand / self->got + self->got * 50 +
-                 self->killed * 100;
-    self->rank *= gameLevel + 1;
+    rank = (double)damage / got + (double)stand / got + got * 50 + killed * 100;
+    rank *= gameLevel + 1;
 }
-void addScore(Score* a, Score* b) {
-    a->got += b->got;
-    a->damage += b->damage;
-    a->killed += b->killed;
-    a->stand += b->stand;
-    calcScore(a);
+void Score::addScore(Score *b) {
+    got += b->got;
+    damage += b->damage;
+    killed += b->killed;
+    stand += b->stand;
+    calcScore();
 }

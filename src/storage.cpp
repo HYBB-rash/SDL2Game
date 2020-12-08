@@ -5,7 +5,7 @@
 void readScore(FILE* f, Score* score) {
     fscanf(f, "%d %d %d %d\n", &score->damage, &score->stand, &score->killed,
            &score->got);
-    calcScore(score);
+    score->calcScore();
 }
 void writeScore(FILE* f, Score* score) {
     fprintf(f, "%d %d %d %d\n", score->damage, score->stand, score->killed,
@@ -13,7 +13,7 @@ void writeScore(FILE* f, Score* score) {
 }
 void destroyRanklist(int n, Score** scores) {
     for (int i = 0; i < n; i++) {
-        destroyScore(scores[i]);
+        scores[i]->destroyScore();
     }
 }
 Score** insertScoreToRanklist(Score* score, int* n, Score** scores) {
@@ -23,7 +23,7 @@ Score** insertScoreToRanklist(Score* score, int* n, Score** scores) {
                 scores = static_cast<Score **>(realloc(scores, sizeof(Score *) * (++*n)));
                 scores[*n - 1] = createScore();
             }
-            else destroyScore(scores[*n - 1]);
+            else scores[*n - 1]->destroyScore();
             for (int j = *n - 1; j > i ; j--) scores[j] = scores[j - 1];
             scores[i] = createScore();
             memcpy(scores[i], score, sizeof(Score));

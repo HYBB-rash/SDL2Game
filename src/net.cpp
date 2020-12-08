@@ -102,7 +102,7 @@ void hostGame() {
     // Clean up after connecting
     SDLNet_TCP_Close(lanServerSocket);
     lanServerSocket = NULL;
-    for (unsigned i = 0; i < 4; i++) destroyText(listening[i]);
+    for (unsigned i = 0; i < 4; i++) listening[i]->destroyText();
 
     blackout();
 
@@ -120,7 +120,7 @@ void hostGame() {
     clearRenderer();
     renderCenteredText(peerNameText, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 2);
     SDL_RenderPresent(renderer);
-    destroyText(peerNameText);
+    peerNameText->destroyText();
 
     HandShakePacket handShakePacket = createHandShakePacket();
     char buffer[sizeof(HandShakePacket)];
@@ -177,7 +177,7 @@ void joinGame(const char* hostname, Uint16 port) {
         SDL_RenderPresent(renderer);
     }
 
-    for (unsigned i = 0; i < 4; i++) destroyText(connecting[i]);
+    for (unsigned i = 0; i < 4; i++) connecting[i]->destroyText();
 
     if (!quit) {
         // Add socket to set
