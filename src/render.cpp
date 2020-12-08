@@ -293,11 +293,41 @@ void renderHp(){
 }
 
 void renderCountDown(){
-
+    double percent = lround(renderFrames % GAME_MAP_RELOAD_PERIOD) / GAME_MAP_RELOAD_PERIOD;
+    int width = percent * UI_COUNTDOWN_BAR_WIDTH;
+    countDownBar->origin->crops[0].w = countDownBar->origin->width = width;
 }
 
 void renderInfo(){
+    int startY = 0, startX = 10;
+    int lingGap = FONT_SIZE;
+    renderText(stageText, startX, startY, 1);
+    startY += lingGap;
+    for (int i = 0; i < playersCount; i ++){
+        char buf[1 << 8];
+        spriteSnake[i]->score->calcScore();
+        sprintf(buf, "Player%d:%d", i + 1, lround(spriteSnake[i]->score->rank + 0.5));
+        scoresText[i]->setText(buf);
+        renderText(scoresText[i], startX, startY, 1);
+        startY += lingGap;
+    }
+    if (playersCount == 1) {
+        int GAME_WIN_NUM;
+        char buf[1 << 8];
+        sprintf(buf, "Find %d more heros!", GAME_WIN_NUM > spriteSnake[0]->num ? GAME_WIN_NUM - spriteSnake[0]->num : 0);
+        taskText->setText(buf);
+        renderText(taskText, startX, startY, 1);
+        startY += lingGap;
+    }
+}
 
+void renderCenteredTextBackground(Text* text, int x, int y, double scale) {
+    int width = lround(text->width * scale + 0.5);
+    int height = lround(text->height * scale + 0.5);
+    SDL_Rect dst = {x - width / 2, y - height / 2, width, height};
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 200);
+    SDL_RenderFillRect(renderer, &dst);
 }
 
 void renderId(){
@@ -306,7 +336,9 @@ void renderId(){
         Snake *snake = spriteSnake[i];
         if (snake->sprites->head) {
             auto *snakeHead = (Sprite *)snake->sprites->head->element;
-            if (i == powerful); //todo
+            if (i == powerful)
+                renderCenteredTextBackground(&texts[4 + i], snakeHead->x, snakeHead->y, 0.5);
+            renderCenteredText(&texts[4 + i], snakeHead->x, snakeHead->y, 0.5);
         }
     }
 }
@@ -321,6 +353,48 @@ void render() {
         else
             renderAnimationLinkList(&animationsList[i]);
     }
+    renderHp();
+    renderCountDown();
+    renderInfo();
+    renderId();
+    SDL_RenderPresent(renderer);
+    renderFrames ++;
+}
+
+void renderUi() {
+    SDL_SetRenderDrawColor(renderer, RENDER_BG_COLOR, 255);
+    SDL_RenderClear(renderer);
+
+    for (int i = 0; i < ANIMATION_LINK_LIST_NUM; ++i) {
+        updateAnimationLinkList(&animationsList[i]);
+        if (i == RENDER_LIST_SPRITE_ID)
+            renderAnimationLinkListWithSort(&animationsList[i]);
+        else
+            renderAnimationLinkList(&animationsList[i]);
+    }
+}
+
+void pushAnimationToRender(int id, Animation *ani) {
+    LinkNode *p = createLinkNode(ani);
+    pushLinkNode(&animationsList[id], p);
+}
+
+void blacken(int duration) {
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_Rect rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    SDL_SetRenderDrawColor(renderer, RENDER_BG_COLOR, 85);
+    for (int i = 0; i < duration; ++i) {
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_RenderPresent(renderer);
+    }
+}
+
+void blackout() {
+    blacken(RENDER_BLACKOUT_DURATION);
+}
+
+void dim() {
+    blacken(RENDER_DIM_DURATION);
 }
 
 

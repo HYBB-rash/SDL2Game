@@ -33,53 +33,15 @@
 // UI
 #define UI_COUNTDOWN_BAR_WIDTH 128
 
-/**
- * 渲染字体
- * @param text 目标字体
- * @param x 渲染的位置
- * @param y 渲染的位置
- * @param scale 缩放程度
- */
 void renderText(const Text* text, int x, int y, double);
-
-/**
- * 将字体渲染在中间的位置
- * @param text 目标字符
- * @param x  位置
- * @param y  位置
- * @param scale  缩放倍率
- * @return 返回SDL_Point坐标
- */
 SDL_Point renderCenteredText(const Text* text, int x, int y, double);
-
-
 void setEffect(Texture* texture, Effect* effect);
 void unsetEffect(Texture* texture);
-
-/**
- * 将动画效果附着到链表中
- * @param list
- * @param texture
- * @param effect
- * @param lp
- * @param duration
- * @param x
- * @param y
- * @param flip
- * @param angle
- * @param at
- * @return
- */
 Animation* createAndPushAnimation(LinkList* list, Texture* texture,
                                   const Effect* effect, LoopType lp,
                                   int duration, int x, int y,
                                   SDL_RendererFlip flip, double angle, At at);
 void updateAnimationLinkList(LinkList* list);
-
-/**
- * 渲染整个队列
- * @param list 等待渲染的队列
- */
 void renderAnimationLinkList(LinkList* list);
 void updateAnimationOfSprite(Sprite* self);
 void updateAnimationOfSnake(Snake* snake);

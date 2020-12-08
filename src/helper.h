@@ -6,7 +6,7 @@
 #define SDL2GAME_HELPER_H
 #include <SDL.h>
 #include <cmath>
-#include <stdbool.h>
+#include <cstdbool>
 
 #include "sprite.h"
 #include "types.h"
@@ -15,6 +15,7 @@
 #define MIN(x, y) (x > y ? y : x)
 #define PI 3.1415926535
 #define HELPER_RECT_CROSS_LIMIT 8
+
 int randInt(int l, int r);
 // return random double in [0, 1]
 double randDouble();
