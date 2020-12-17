@@ -30,8 +30,7 @@ int trapVerdict(Sprite* sprite) {
             int xx = x / UNIT + dx, yy = y / UNIT + dy;
             if (inr(xx, 0, n - 1) && inr(yy, 0, m - 1)) {
                 block = getMapRect(xx, yy);
-                if (RectRectCross(&box, &block) && hasMap[xx][yy] &&
-                    map[xx][yy].bp == BLOCK_TRAP) {
+                if (RectRectCross(&box, &block) && hasMap[xx][yy] && map[xx][yy].bp == BLOCK_TRAP) {
                     ret += map[xx][yy].enable + 1;
                 }
             }

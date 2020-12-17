@@ -70,8 +70,7 @@ public:
     bool strongBind;
     int lifeSpan;
 
-    void
-    initAnimation(Texture *origin, const Effect *effect, LoopType lp, int duration, int x, int y, SDL_RendererFlip flip,
+    void initAnimation(Texture *origin, const Effect *effect, LoopType lp, int duration, int x, int y, SDL_RendererFlip flip,
                   double angle, At at);
     void destroyAnimation();
 } ;

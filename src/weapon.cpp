@@ -27,20 +27,20 @@ Weapon weapons[WEAPONS_SIZE];
  */
 void initWeapon(Weapon* self, int birthTextureId, int deathTextureId, int flyTextureId) {
     Animation* birthAni = NULL;
-    Animation* deathAni = NULL;
-    Animation* flyAni = NULL;
+    Animation* deathAni = nullptr;
+    Animation* flyAni = nullptr;
     if (birthTextureId != -1) {
-        birthAni = createAnimation(&textures[birthTextureId], NULL, LOOP_ONCE,
+        birthAni = createAnimation(&textures[birthTextureId], nullptr, LOOP_ONCE,
                                    SPRITE_ANIMATION_DURATION, 0, 0, SDL_FLIP_NONE,
                                    0, AT_CENTER);
     }
     if (deathTextureId != -1) {
-        deathAni = createAnimation(&textures[deathTextureId], NULL, LOOP_ONCE,
+        deathAni = createAnimation(&textures[deathTextureId], nullptr, LOOP_ONCE,
                                    SPRITE_ANIMATION_DURATION, 0, 0, SDL_FLIP_NONE,
                                    0, AT_BOTTOM_CENTER);
     }
     if (flyTextureId != -1) {
-        flyAni = createAnimation(&textures[flyTextureId], NULL, LOOP_INFI,
+        flyAni = createAnimation(&textures[flyTextureId], nullptr, LOOP_INFI,
                                  SPRITE_ANIMATION_DURATION, 0, 0, SDL_FLIP_NONE, 0,
                                  AT_CENTER);
     }

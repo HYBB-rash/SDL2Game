@@ -99,10 +99,10 @@ bool init() {
         success = false;
     } else {
         // Create window
-        window = SDL_CreateWindow("Dungeon Rush "VERSION_STRING, SDL_WINDOWPOS_UNDEFINED,
+        window = SDL_CreateWindow("SDL Game"VERSION_STRING, SDL_WINDOWPOS_UNDEFINED,
                                   SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
                                   SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        if (window == NULL) {
+        if (window == nullptr) {
             printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
             success = false;
         } else {
@@ -115,7 +115,7 @@ bool init() {
             printf("define software acc\n");
       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 #endif
-            if (renderer == NULL) {
+            if (renderer == nullptr) {
                 printf("Renderer could not be created! SDL Error: %s\n",
                        SDL_GetError());
                 success = false;
@@ -151,17 +151,17 @@ bool init() {
 }
 SDL_Texture* loadSDLTexture(const char* path) {
     // The final texture
-    SDL_Texture* newTexture = NULL;
+    SDL_Texture* newTexture = nullptr;
 
     // Load image at specified path
     SDL_Surface* loadedSurface = IMG_Load(path);
-    if (loadedSurface == NULL) {
+    if (loadedSurface == nullptr) {
         printf("Unable to load image %s! SDL_image Error: %s\n", path,
                IMG_GetError());
     } else {
         // Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-        if (newTexture == NULL) {
+        if (newTexture == nullptr) {
             printf("Unable to create texture from %s! SDL Error: %s\n", path,
                    SDL_GetError());
         }
@@ -215,7 +215,7 @@ bool loadAudio() {
     bool success = true;
     for (int i = 0; i < bgmNums; i++) {
         backgroundMusics[i] = Mix_LoadMUS(bgmsPath[i]);
-        success &= backgroundMusics[i] != NULL;
+        success &= backgroundMusics[i] != nullptr;
         if (!backgroundMusics[i]) printf("Failed to load %s: SDL_mixer Error: %s\n", bgmsPath[i], Mix_GetError());
 #ifdef DBG
         else printf("BGM %s loaded\n", bgmsPath[i]);
@@ -226,7 +226,7 @@ bool loadAudio() {
     while (~fscanf(f, "%s", buf)) {
         sprintf(path, "%s%s", soundsPathPrefix, buf);
         sounds[soundsCount] = Mix_LoadWAV(path);
-        success &= sounds[soundsCount] != NULL;
+        success &= sounds[soundsCount] != nullptr;
         if (!sounds[soundsCount]) printf("Failed to load %s: : SDL_mixer Error: %s\n", path, Mix_GetError());
 #ifdef DBG
         else printf("Sound #%d: %s\n", soundsCount, path);
@@ -252,7 +252,7 @@ bool loadMedia() {
     }
     // Open the font
     font = TTF_OpenFont(fontPath, FONT_SIZE);
-    if (font == NULL) {
+    if (font == nullptr) {
         printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
         success = false;
     } else {
@@ -274,9 +274,9 @@ bool loadMedia() {
 }
 void cleanup() {
     // Deallocate surface
-    for (int i = 0; i < TILESET_SIZE; i++) {
-        SDL_DestroyTexture(originTextures[i]);
-        originTextures[i] = NULL;
+    for (auto & originTexture : originTextures) {
+        SDL_DestroyTexture(originTexture);
+        originTexture = nullptr;
     }
     // Destroy window
     SDL_DestroyRenderer(renderer);
@@ -328,7 +328,7 @@ void initCommonEffects() {
 #endif
 }
 void initCommonSprite(Sprite* sprite, Weapon* weapon, int res_id, int hp) {
-    Animation* ani = createAnimation(&textures[res_id], NULL, LOOP_INFI,
+    Animation* ani = createAnimation(&textures[res_id], nullptr, LOOP_INFI,
                                      SPRITE_ANIMATION_DURATION, 0, 0, SDL_FLIP_NONE, 0,
                                      AT_BOTTOM_CENTER);
     *sprite = (Sprite){0, 0, hp, hp, weapon, ani, RIGHT, RIGHT};

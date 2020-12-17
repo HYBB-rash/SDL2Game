@@ -34,7 +34,7 @@ Score** insertScoreToRanklist(Score* score, int* n, Score** scores) {
 
 void writeRanklist(const char* path, int n, Score** scores) {
     FILE* f = fopen(path, "w");
-    if (f == NULL) {
+    if (f == nullptr) {
         fprintf(stderr, "writeRanklist: Can not create file\n");
         return;
     }

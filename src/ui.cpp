@@ -73,7 +73,7 @@ int chooseOptions(int optionsNum, Text** options) {
             totalHeight = lineGap * (optionsNum - 1);
     int startY = (SCREEN_HEIGHT - totalHeight) / 2;
     while (!moveCursor(optionsNum)) {
-        Sprite* sprite = static_cast<Sprite *>(player->sprites->head->element);
+        auto* sprite = static_cast<Sprite *>(player->sprites->head->element);
         sprite->ani->at = AT_CENTER;
         sprite->x = SCREEN_WIDTH / 2 - options[cursorPos]->width / 2 - UNIT / 2;
         sprite->y = startY + cursorPos * lineGap;
